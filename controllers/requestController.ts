@@ -9,15 +9,16 @@ export const createRequest = async (req: Request, res: Response) => {
 
         const oldRequest = await RequestModel.findOne({ userId, requestType });
 
-        if (!oldRequest.isCompleted) {
+        if (oldRequest && !oldRequest.isCompleted) {
             return res.status(409).send("Заявка уже обрабатывается");
         }
 
         const request = await RequestModel.create(model);
 
         res.status(200).json();
-    } catch {
-        return res.status(500).send();
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
     }
 };
 
@@ -25,7 +26,7 @@ export const getRequests = async (req: Request, res: Response) => {
     try {
         const { userId } = req.body;
 
-        const requests = await RequestModel.find({ userId });
+        const requests = await RequestModel.find({ userId, isCompleted: false });
 
         res.status(200).json(requests);
     } catch {
@@ -37,12 +38,19 @@ export const updateRequest = async (req: Request, res: Response) => {
     try {
         const { userId, requestType, step } = req.body;
 
-        const request = await RequestModel.findOne({ userId, requestType });
+        const request = await RequestModel.findOne({ userId, requestType, isCompleted: false });
+
+        if (!request) {
+            return res.status(500).send();
+        }
+
+        if (request.steps.find((item) => item.step === step)) {
+            return res.status(409).send();
+        }
 
         const updated = await RequestModel.findOneAndUpdate(
-            { userId, requestType },
+            { userId, requestType, isCompleted: false },
             {
-                ...request,
                 steps: [
                     ...request.steps,
                     {
@@ -54,7 +62,8 @@ export const updateRequest = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(updated);
-    } catch {
+    } catch (error) {
+        console.log(error);
         return res.status(500).send();
     }
 };
@@ -63,12 +72,11 @@ export const completeRequest = async (req: Request, res: Response) => {
     try {
         const { userId, requestType } = req.body;
 
-        const request = await RequestModel.findOne({ userId, requestType });
+        const request = await RequestModel.findOne({ userId, requestType, isCompleted: false });
 
         const updated = await RequestModel.findOneAndUpdate(
-            { userId, requestType },
+            { userId, requestType, isCompleted: false },
             {
-                ...request,
                 isCompleted: true,
             }
         );
