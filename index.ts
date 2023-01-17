@@ -2,8 +2,7 @@ import { config } from "dotenv";
 import express from "express";
 import { connectDB } from "./configs/database";
 import bodyParser from "body-parser";
-import { accountRouter } from "./routes/accountRouter";
-import { passwordRouter } from "./routes/passwordRouter";
+import { requestRouter } from "./routes/requestRouter";
 
 config();
 connectDB();
@@ -14,8 +13,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use("/account", accountRouter);
-app.use("/password", passwordRouter);
+app.use("/request", requestRouter);
 
 app.listen(port, () => {
     console.log("server started");

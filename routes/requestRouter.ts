@@ -1,4 +1,4 @@
-import { completeRequest, createRequest, getRequests, updateRequest } from "controllers/requestController";
+import { completeRequest, createRequest, getRequests, updateRequest } from "../controllers/requestController";
 import express from "express";
 
 export const requestRouter = express.Router();

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { RequestModel } from "models/requestModel";
+import { RequestModel } from "../models/requestModel";
 
 export const createRequest = async (req: Request, res: Response) => {
     try {
