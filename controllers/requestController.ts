@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { RequestModel, RequestType } from "models/requestModel";
+import { RequestModel } from "models/requestModel";
 
 export const createRequest = async (req: Request, res: Response) => {
     try {
@@ -50,6 +50,26 @@ export const updateRequest = async (req: Request, res: Response) => {
                         completeDate: new Date(),
                     },
                 ],
+            }
+        );
+
+        res.status(200).json(updated);
+    } catch {
+        return res.status(500).send();
+    }
+};
+
+export const completeRequest = async (req: Request, res: Response) => {
+    try {
+        const { userId, requestType } = req.body;
+
+        const request = await RequestModel.findOne({ userId, requestType });
+
+        const updated = await RequestModel.findOneAndUpdate(
+            { userId, requestType },
+            {
+                ...request,
+                isCompleted: true,
             }
         );
 

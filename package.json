@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon index.ts",
-    "build": "rimraf ./dist && tsc && node dist/index.js"
+    "build": "rimraf ./dist && tsc"
   },
   "repository": {
     "type": "git",
